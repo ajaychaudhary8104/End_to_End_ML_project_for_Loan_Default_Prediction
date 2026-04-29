@@ -1,0 +1,85 @@
+
+
+================================================================================
+DATA PREPROCESSING SUMMARY REPORT
+================================================================================
+
+1. FEATURE ENGINEERING
+   - Created 8 new derived features:
+     * Loan-to-Income Ratio (LTI)
+     * Age Group (categorical binning)
+     * Employment Status Flag
+     * High DTI Flag (DTI > 0.5)
+     * Low Credit Score Flag (Score < 600)
+     * High Interest Rate Flag (Rate > 15%)
+     * Combined Risk Score (0-3)
+     * Income-per-Age Ratio
+     * Employment Duration Category
+
+2. CATEGORICAL ENCODING
+   - Applied One-Hot Encoding to 9 categorical features
+   - Removed first category per feature to avoid multicollinearity
+   - Generated 13 encoded features
+   - Total features after encoding: 40
+
+3. STRATIFIED TRAIN-TEST SPLIT
+   - Train Set:      178,742 samples (70%) → Default rate: 11.61%
+   - Validation Set: 38,302 samples (15%) → Default rate: 11.61%
+   - Test Set:       38,303 samples (15%) → Default rate: 11.61%
+   
+   ✓ Class distribution maintained across all splits (stratification verified)
+
+4. FEATURE SCALING (StandardScaler)
+   - Scaled 11 numerical features
+   - Fitted on training data only (prevents data leakage)
+   - Features centered at mean = 0, std = 1
+   - Scaling parameters saved for future predictions
+
+5. CLASS IMBALANCE HANDLING (SMOTE)
+   - Original training imbalance: 7.61:1 (Non-default:Default)
+   - Applied SMOTE to training data
+   - New training samples: 315,970 (from 178,742)
+   - New imbalance ratio: 1.00:1 (Perfect balance achieved)
+   - Validation & Test sets: Unchanged (for realistic evaluation)
+
+6. FEATURE SELECTION INSIGHTS
+   - Total features: 39
+   - Strong features (top 25%): 10 features
+   - Significant features (p < 0.05): 32 features
+   - Recommendation: Keep all features for initial training, monitor for overfitting
+
+7. FINAL DATA SPECIFICATIONS
+   - Training Set Shape (after SMOTE): (315970, 39)
+   - Validation Set Shape: (38302, 39)
+   - Test Set Shape: (38303, 39)
+   
+   Data Type Distribution:
+   - Numerical Features (scaled): 11
+   - Binary Features (one-hot encoded): 26
+   - Categorical Features (one-hot encoded): 23
+
+8. DATA QUALITY CHECKS
+   ✓ No missing values in any set
+   ✓ No infinite values detected
+   ✓ All numerical features scaled properly (mean≈0, std≈1)
+   ✓ Class imbalance addressed with SMOTE
+   ✓ Data leakage prevented (scaler fit on train only)
+   ✓ Stratification maintained across splits
+
+9. PREPROCESSING ARTIFACTS SAVED
+   ✓ CSV files for inspection and analysis
+   ✓ Pickle files for efficient model loading
+   ✓ StandardScaler object for future predictions
+   ✓ SMOTE transformation documented
+
+================================================================================
+READY FOR PHASE 4: MODEL BUILDING & TRAINING
+================================================================================
+
+Next Steps:
+1. Train baseline model on preprocessed data
+2. Experiment with multiple algorithms
+3. Perform hyperparameter tuning
+4. Evaluate on validation set
+5. Select best model and evaluate on test set
+
