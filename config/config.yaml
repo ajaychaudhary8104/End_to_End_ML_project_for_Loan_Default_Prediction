@@ -73,4 +73,12 @@ data_transformation:
   random_state: 42
   target_column: Default
 
-    
+
+model_training:
+  root_dir: artifacts/model_training
+  train_file_path: artifacts/data_transformation/split_data/train.csv
+  validation_file_path: artifacts/data_transformation/split_data/validation.csv
+  test_file_path: artifacts/data_transformation/split_data/test.csv
+  model_file_path: artifacts/model_training/xgboost_model.pkl
+  metrics_file_path: artifacts/model_training/model_metrics.json
+  target_column: Default

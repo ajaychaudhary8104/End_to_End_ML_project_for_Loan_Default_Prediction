@@ -42,3 +42,15 @@ class DataTransformationConfig:
     random_state: int
     target_column: str
     split_artifacts_dir: Path
+
+
+@dataclass(frozen=True)
+class ModelTrainingConfig:
+    root_dir: Path
+    train_file_path: Path
+    validation_file_path: Path
+    test_file_path: Path
+    model_file_path: Path
+    metrics_file_path: Path
+    model_params: dict
+    target_column: str

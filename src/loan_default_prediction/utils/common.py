@@ -7,7 +7,6 @@ import joblib
 from ensure import ensure_annotations
 from box import ConfigBox
 from pathlib import Path
-from typing import Any
 import base64
 
 
@@ -86,11 +85,11 @@ def load_json(path: Path) -> ConfigBox:
 
 
 @ensure_annotations
-def save_bin(data: Any, path: Path):
+def save_bin(data: object, path: Path):
     """save binary file
 
     Args:
-        data (Any): data to be saved as binary
+        data (object): data to be saved as binary
         path (Path): path to binary file
     """
     joblib.dump(value=data, filename=path)
@@ -98,14 +97,14 @@ def save_bin(data: Any, path: Path):
 
 
 @ensure_annotations
-def load_bin(path: Path) -> Any:
+def load_bin(path: Path) -> object:
     """load binary data
 
     Args:
         path (Path): path to binary file
 
     Returns:
-        Any: object stored in the file
+        object: object stored in the file
     """
     data = joblib.load(path)
     logger.info(f"binary file loaded from: {path}")
