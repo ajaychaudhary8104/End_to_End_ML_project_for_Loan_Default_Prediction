@@ -32,4 +32,45 @@ data_validation:
     HasCoSigner: object
     Default: int64
 
+
+data_preprocessing:
+  root_dir: artifacts/data_preprocessing
+  raw_data_dir: artifacts/data_ingestion
+  input_file_name: Loan_default.csv
+  processed_data_file: artifacts/data_preprocessing/processed_data.csv
+  target_column: Default
+  numeric_columns:
+    - Age
+    - Income
+    - LoanAmount
+    - CreditScore
+    - MonthsEmployed
+    - NumCreditLines
+    - InterestRate
+    - LoanTerm
+    - DTIRatio
+  categorical_columns:
+    - Education
+    - EmploymentType
+    - MaritalStatus
+    - HasMortgage
+    - HasDependents
+    - LoanPurpose
+    - HasCoSigner
+  drop_columns:
+    - LoanID
+
+
+data_transformation:
+  root_dir: artifacts/data_transformation
+  split_artifacts_dir: artifacts/data_transformation/split_data
+  input_file_path: artifacts/data_preprocessing/processed_data.csv
+  train_file_path: artifacts/data_transformation/split_data/train.csv
+  validation_file_path: artifacts/data_transformation/split_data/validation.csv
+  test_file_path: artifacts/data_transformation/split_data/test.csv
+  test_size: 0.15
+  validation_size: 0.15
+  random_state: 42
+  target_column: Default
+
     
