@@ -1,6 +1,9 @@
 from src.loan_default_prediction.constants import *
 from src.loan_default_prediction.utils.common import read_yaml, create_directories
-from src.loan_default_prediction.entity.config_entity import DataIngestionConfig, DataValidationConfig, DataPreprocessingConfig
+from src.loan_default_prediction.entity.config_entity import (DataIngestionConfig, 
+                                                              DataValidationConfig,
+                                                                DataPreprocessingConfig,
+                                                                DataTransformationConfig)
 
 class ConfigurationManager:
     def __init__(self, config_filepath = CONFIG_FILE_PATH, params_filepath = PARAMS_FILE_PATH):
@@ -60,3 +63,24 @@ class ConfigurationManager:
         )
 
         return data_preprocessing_config
+    
+
+    def get_data_transformation_config(self) -> DataTransformationConfig:
+        config = self.config.data_transformation
+
+        create_directories([config.root_dir])
+
+        data_transformation_config = DataTransformationConfig(
+            root_dir=config.root_dir,
+            split_artifacts_dir=config.split_artifacts_dir,
+            input_file_path=config.input_file_path,
+            train_file_path=config.train_file_path,
+            validation_file_path=config.validation_file_path,
+            test_file_path=config.test_file_path,
+            test_size=float(config.test_size),
+            validation_size=float(config.validation_size),
+            random_state=int(config.random_state),
+            target_column=config.target_column
+        )
+
+        return data_transformation_config
