@@ -6,3 +6,30 @@ data_ingestion:
   source_URL: https://drive.google.com/file/d/1tWNqFpIMBtCJt678MBPtQgyzw3LnYqx6/view?usp=sharing
   local_data_file: artifacts/data_ingestion/data.zip
   unzip_dir: artifacts/data_ingestion
+
+
+data_validation:
+  root_dir: artifacts/data_validation
+  STATUS_FILE: artifacts/data_validation/status.txt
+  unzip_data_dir: artifacts/data_ingestion
+  all_schema:
+    LoanID: object
+    Age: int64
+    Income: int64
+    LoanAmount: int64
+    CreditScore: int64
+    MonthsEmployed: int64
+    NumCreditLines: int64
+    InterestRate: float64
+    LoanTerm: int64
+    DTIRatio: float64
+    Education: object
+    EmploymentType: object
+    MaritalStatus: object
+    HasMortgage: object
+    HasDependents: object
+    LoanPurpose: object
+    HasCoSigner: object
+    Default: int64
+
+    

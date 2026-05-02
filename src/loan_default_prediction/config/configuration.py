@@ -1,6 +1,6 @@
 from src.loan_default_prediction.constants import *
 from src.loan_default_prediction.utils.common import read_yaml, create_directories
-from src.loan_default_prediction.entity.config_entity import DataIngestionConfig
+from src.loan_default_prediction.entity.config_entity import DataIngestionConfig, DataValidationConfig
 
 class ConfigurationManager:
     def __init__(self, config_filepath = CONFIG_FILE_PATH, params_filepath = PARAMS_FILE_PATH):
@@ -25,3 +25,19 @@ class ConfigurationManager:
         )
 
         return data_ingestion_config
+
+    
+    def get_data_validation_config(self) -> DataValidationConfig:
+        config = self.config.data_validation
+        schema = self.config.data_validation.all_schema
+
+        create_directories([config.root_dir])
+
+        data_validation_config = DataValidationConfig(
+            root_dir=config.root_dir,
+            STATUS_FILE=config.STATUS_FILE,
+            unzip_data_dir=config.unzip_data_dir,
+            all_schema=schema
+        )
+
+        return data_validation_config
