@@ -1,0 +1,209 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python -m src.loan_default_prediction.pipeline.stage_01_data_ingestion
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: 98b942066855c1ab54ce5e3cc9b69f77
+      size: 3406
+    - path: src/loan_default_prediction/components/data_ingestion.py
+      hash: md5
+      md5: d22142498167a73cb6736dc9040e0d11
+      size: 1709
+    - path: src/loan_default_prediction/pipeline/stage_01_data_ingestion.py
+      hash: md5
+      md5: 2f409f8bc64cb49889aab2d1f707e26e
+      size: 946
+    outs:
+    - path: artifacts/data_ingestion/Loan_default.csv
+      hash: md5
+      md5: 5f5a3364753b86ef3472cba30af224ce
+      size: 24834870
+  data_validation:
+    cmd: python -m src.loan_default_prediction.pipeline.stage_02_data_validation
+    deps:
+    - path: artifacts/data_ingestion/Loan_default.csv
+      hash: md5
+      md5: 5f5a3364753b86ef3472cba30af224ce
+      size: 24834870
+    - path: config/config.yaml
+      hash: md5
+      md5: 98b942066855c1ab54ce5e3cc9b69f77
+      size: 3406
+    - path: src/loan_default_prediction/components/data_validation.py
+      hash: md5
+      md5: 8bfe35d705d8283ff578ee0185ddc29a
+      size: 13955
+    - path: src/loan_default_prediction/pipeline/stage_02_data_validation.py
+      hash: md5
+      md5: 8696ac4d40a50d80ead034e8ebaee277
+      size: 925
+    outs:
+    - path: artifacts/data_validation/status.txt
+      hash: md5
+      md5: b3abeba0f558f3e3c8cafd7420323bb2
+      size: 343
+  data_preprocessing:
+    cmd: python -m 
+      src.loan_default_prediction.pipeline.stage_03_data_preprocessing
+    deps:
+    - path: artifacts/data_ingestion/Loan_default.csv
+      hash: md5
+      md5: 5f5a3364753b86ef3472cba30af224ce
+      size: 24834870
+    - path: config/config.yaml
+      hash: md5
+      md5: 98b942066855c1ab54ce5e3cc9b69f77
+      size: 3406
+    - path: src/loan_default_prediction/components/data_preprocessing.py
+      hash: md5
+      md5: 22602438611fa53b09412206d02b3e26
+      size: 7428
+    - path: src/loan_default_prediction/pipeline/stage_03_data_preprocessing.py
+      hash: md5
+      md5: b93b6eb4c610a535fd00a8d30809b93d
+      size: 961
+    outs:
+    - path: artifacts/data_preprocessing/processed_data.csv
+      hash: md5
+      md5: 71f3289acccba972175f6a6b35eb18a4
+      size: 88036915
+  data_transformation:
+    cmd: python -m 
+      src.loan_default_prediction.pipeline.stage_04_data_transformation
+    deps:
+    - path: artifacts/data_preprocessing/processed_data.csv
+      hash: md5
+      md5: 71f3289acccba972175f6a6b35eb18a4
+      size: 88036915
+    - path: config/config.yaml
+      hash: md5
+      md5: 98b942066855c1ab54ce5e3cc9b69f77
+      size: 3406
+    - path: src/loan_default_prediction/components/data_transformation.py
+      hash: md5
+      md5: b88f691e7740043453a9299c763c6963
+      size: 4532
+    - path: src/loan_default_prediction/pipeline/stage_04_data_transformation.py
+      hash: md5
+      md5: b313dcdef6994ac0d4cc3c55b557dbe5
+      size: 973
+    outs:
+    - path: artifacts/data_transformation/split_data/test.csv
+      hash: md5
+      md5: 690a40a942f25e65cd98245ac2bf8471
+      size: 13062039
+    - path: artifacts/data_transformation/split_data/train.csv
+      hash: md5
+      md5: 31e33bf43a8c500af80310ffc771da39
+      size: 108018967
+    - path: artifacts/data_transformation/split_data/validation.csv
+      hash: md5
+      md5: 0a4b6aa1ee37edf2f9cd03e862c0dab6
+      size: 13061625
+  model_training:
+    cmd: python -m src.loan_default_prediction.pipeline.stage_05_model_training
+    deps:
+    - path: artifacts/data_transformation/split_data/test.csv
+      hash: md5
+      md5: 690a40a942f25e65cd98245ac2bf8471
+      size: 13062039
+    - path: artifacts/data_transformation/split_data/train.csv
+      hash: md5
+      md5: 31e33bf43a8c500af80310ffc771da39
+      size: 108018967
+    - path: artifacts/data_transformation/split_data/validation.csv
+      hash: md5
+      md5: 0a4b6aa1ee37edf2f9cd03e862c0dab6
+      size: 13061625
+    - path: config/config.yaml
+      hash: md5
+      md5: 98b942066855c1ab54ce5e3cc9b69f77
+      size: 3406
+    - path: params.yaml
+      hash: md5
+      md5: fbd920c49d13cdd5068cbcfbbff9d3b9
+      size: 279
+    - path: src/loan_default_prediction/components/model_training.py
+      hash: md5
+      md5: 11e96ab0728a0e40fc3b9b115a30b80e
+      size: 4200
+    - path: src/loan_default_prediction/pipeline/stage_05_model_training.py
+      hash: md5
+      md5: e603cb629349c72d152f82cdb9f17ef0
+      size: 896
+    outs:
+    - path: artifacts/model_training/model_metrics.json
+      hash: md5
+      md5: 3f885f479761d1cd8029701b257ac926
+      size: 262
+    - path: artifacts/model_training/xgboost_model.pkl
+      hash: md5
+      md5: e6b69d70b54a662fc3722d47758cdb42
+      size: 1674020
+  model_evaluation:
+    cmd: python -m 
+      src.loan_default_prediction.pipeline.stage_06_model_evaluation
+    deps:
+    - path: artifacts/data_transformation/split_data/test.csv
+      hash: md5
+      md5: 690a40a942f25e65cd98245ac2bf8471
+      size: 13062039
+    - path: artifacts/model_training/xgboost_model.pkl
+      hash: md5
+      md5: e6b69d70b54a662fc3722d47758cdb42
+      size: 1674020
+    - path: config/config.yaml
+      hash: md5
+      md5: 98b942066855c1ab54ce5e3cc9b69f77
+      size: 3406
+    - path: params.yaml
+      hash: md5
+      md5: fbd920c49d13cdd5068cbcfbbff9d3b9
+      size: 279
+    - path: src/loan_default_prediction/components/model_evaluation.py
+      hash: md5
+      md5: e14ca67a8c7e2abd8b5f69cedd7e7e9c
+      size: 10648
+    - path: src/loan_default_prediction/pipeline/stage_06_model_evaluation.py
+      hash: md5
+      md5: e656f6127081d2a5c39702f8950039fd
+      size: 1201
+    outs:
+    - path: artifacts/model_evaluation/model_evaluation_metrics.json
+      hash: md5
+      md5: b486c056cfc63b9bb7d8929f9afdc978
+      size: 1211
+  model_promotion:
+    cmd: python -m src.loan_default_prediction.pipeline.stage_07_model_promotion
+    deps:
+    - path: artifacts/model_evaluation/model_evaluation_metrics.json
+      hash: md5
+      md5: b486c056cfc63b9bb7d8929f9afdc978
+      size: 1211
+    - path: artifacts/model_training/xgboost_model.pkl
+      hash: md5
+      md5: e6b69d70b54a662fc3722d47758cdb42
+      size: 1674020
+    - path: config/config.yaml
+      hash: md5
+      md5: 98b942066855c1ab54ce5e3cc9b69f77
+      size: 3406
+    - path: src/loan_default_prediction/components/model_promotion.py
+      hash: md5
+      md5: c822a79ade62a29c6882759637483dfe
+      size: 5123
+    - path: src/loan_default_prediction/pipeline/stage_07_model_promotion.py
+      hash: md5
+      md5: fd9d9c0548c6168dea19c905adeb6e3d
+      size: 1058
+    outs:
+    - path: artifacts/model_promotion/production_model.pkl
+      hash: md5
+      md5: e6b69d70b54a662fc3722d47758cdb42
+      size: 1674020
+    - path: artifacts/model_promotion/promotion_summary.json
+      hash: md5
+      md5: a53c771747390f30b35ffebe440fb834
+      size: 266
