@@ -23,6 +23,9 @@ set MLFLOW_TRACKING_URI=https://dagshub.com/ajaychaudhary8104/End_to_End_ML_proj
 set MLFLOW_TRACKING_USERNAME=ajaychaudhary8104
 set MLFLOW_TRACKING_PASSWORD=
 
+docker build -t loan-prediction:latest .
+docker run -p 8000:8000 loan-prediction:latest
+
 # AWS-CICD-Deployment-with-Github-Actions
 
 ## 1. Login to AWS console.
