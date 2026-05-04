@@ -6,6 +6,7 @@ from src.loan_default_prediction.pipeline.stage_04_data_transformation import Da
 from src.loan_default_prediction.pipeline.stage_05_model_training import ModelTrainingPipeline
 from src.loan_default_prediction.pipeline.stage_06_model_evaluation import ModelEvaluationPipeline
 from src.loan_default_prediction.pipeline.stage_07_model_promotion import ModelPromotionPipeline
+from src.loan_default_prediction.pipeline.stage_08_inference import ModelInferencePipeline
 
 
 STAGE_NAME = "Data Ingestion stage"
@@ -80,6 +81,16 @@ try:
    model_promotion = ModelPromotionPipeline()
    model_promotion.main()
    logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
+except Exception as e:
+        logger.exception(e)
+        raise e
+
+STAGE_NAME = "Model Inference stage"
+try:
+   logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+   model_inference = ModelInferencePipeline()
+   model_inference.main()
+   logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\n x==========x")
 except Exception as e:
         logger.exception(e)
         raise e

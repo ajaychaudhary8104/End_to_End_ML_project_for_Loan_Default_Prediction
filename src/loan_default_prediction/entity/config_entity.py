@@ -80,3 +80,16 @@ class ModelPromotionConfig:
     promote_threshold: float
     archive_existing_versions: bool
     copy_local_model: bool
+
+
+@dataclass(frozen=True)
+class ModelInferenceConfig:
+    root_dir: Path
+    model_path: Path
+    input_data_path: Path
+    prediction_output_path: Path
+    target_column: str
+    scaler_path: Path
+    numeric_columns: list
+    categorical_columns: list
+    drop_columns: list

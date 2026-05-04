@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loan Default Prediction</title>
+  <style>
+    body {font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; min-height: 100vh; background: #f3f6fb; color: #111827;}
+    .page {max-width: 1080px; margin: 0 auto; padding: 40px 24px;}
+    h1 {margin-bottom: 8px; color: #111827;}
+    p {margin-top: 0; color: #475569;}
+    .grid {display: grid; gap: 16px;}
+    .grid-two {grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));}
+    label {display: block; margin-bottom: 6px; color: #334155; font-weight: 600;}
+    input, select {width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; background: white; color: #0f172a;}
+    button {background: #2563eb; color: white; border: none; padding: 12px 18px; border-radius: 999px; cursor: pointer; font-weight: 600;}
+    button:hover {background: #1d4ed8;}
+    textarea {width: 100%; min-height: 220px; padding: 16px; border: 1px solid #cbd5e1; border-radius: 12px; resize: vertical; font-family: Menlo, Consolas, monospace; font-size: 0.95rem;}
+    pre {white-space: pre-wrap; word-break: break-word; background: #ffffff; border: 1px solid #e2e8f0; padding: 18px; border-radius: 12px; margin-top: 20px;}
+    .note {font-size: 0.95rem; color: #64748b; margin-top: 12px;}
+    .card {background: white; border: 1px solid #e2e8f0; border-radius: 18px; padding: 24px; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);}
+    .actions {display: flex; flex-wrap: wrap; gap: 12px; align-items: center;}
+    .field-grid {display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));}
+    .status {font-size: 0.95rem; color: #334155; margin-top: 10px;}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Loan Default Prediction</h1>
+    <p>Build a loan application record using the form below, add it to the batch, and submit for prediction.</p>
+
+    <div class="card">
+      <div class="field-grid">
+        <div><label for="Age">Age</label><input id="Age" type="number" step="1" value="35" /></div>
+        <div><label for="Income">Income</label><input id="Income" type="number" step="1" value="52000" /></div>
+        <div><label for="LoanAmount">LoanAmount</label><input id="LoanAmount" type="number" step="1" value="15000" /></div>
+        <div><label for="CreditScore">CreditScore</label><input id="CreditScore" type="number" step="1" value="690" /></div>
+        <div><label for="MonthsEmployed">MonthsEmployed</label><input id="MonthsEmployed" type="number" step="1" value="48" /></div>
+        <div><label for="NumCreditLines">NumCreditLines</label><input id="NumCreditLines" type="number" step="1" value="5" /></div>
+        <div><label for="InterestRate">InterestRate</label><input id="InterestRate" type="number" step="0.1" value="12.5" /></div>
+        <div><label for="LoanTerm">LoanTerm</label><input id="LoanTerm" type="number" step="1" value="60" /></div>
+        <div><label for="DTIRatio">DTIRatio</label><input id="DTIRatio" type="number" step="0.01" value="0.24" /></div>
+        <div><label for="Education">Education</label><input id="Education" type="text" value="Bachelor" /></div>
+        <div><label for="EmploymentType">EmploymentType</label><input id="EmploymentType" type="text" value="Salaried" /></div>
+        <div><label for="MaritalStatus">MaritalStatus</label><input id="MaritalStatus" type="text" value="Married" /></div>
+        <div><label for="HasMortgage">HasMortgage</label><select id="HasMortgage"><option>No</option><option>Yes</option></select></div>
+        <div><label for="HasDependents">HasDependents</label><select id="HasDependents"><option>No</option><option selected>Yes</option></select></div>
+        <div><label for="LoanPurpose">LoanPurpose</label><input id="LoanPurpose" type="text" value="Debt Consolidation" /></div>
+        <div><label for="HasCoSigner">HasCoSigner</label><select id="HasCoSigner"><option>No</option><option>Yes</option></select></div>
+      </div>
+
+      <div class="actions">
+        <button id="addRecordButton">Add Record to Batch</button>
+        <button id="clearBatchButton">Clear Batch</button>
+        <button id="runBatchButton">Run Batch Prediction</button>
+      </div>
+      <div class="status" id="batchStatus">Batch size: 1 record</div>
+    </div>
+
+    <div class="card" style="margin-top: 24px;">
+      <label for="batchPayload">Batch payload (JSON)</label>
+      <textarea id="batchPayload"></textarea>
+      <div class="note">You can edit the batch JSON manually before sending.</div>
+    </div>
+
+    <div class="card" style="margin-top: 24px;">
+      <h2>Prediction Output</h2>
+      <pre id="responseOutput">Response will appear here.</pre>
+    </div>
+
+    <div class="footer">
+      <p>Use the <code>/api/docs</code> endpoint for Swagger documentation and to test the API directly.</p>
+    </div>
+  </div>
+
+  <script>
+    const batchPayload = document.getElementById('batchPayload');
+    const batchStatus = document.getElementById('batchStatus');
+    const responseOutput = document.getElementById('responseOutput');
+
+    const defaultRecord = {
+      Age: 35,
+      Income: 52000,
+      LoanAmount: 15000,
+      CreditScore: 690,
+      MonthsEmployed: 48,
+      NumCreditLines: 5,
+      InterestRate: 12.5,
+      LoanTerm: 60,
+      DTIRatio: 0.24,
+      Education: 'Bachelor',
+      EmploymentType: 'Salaried',
+      MaritalStatus: 'Married',
+      HasMortgage: 'No',
+      HasDependents: 'Yes',
+      LoanPurpose: 'Debt Consolidation',
+      HasCoSigner: 'No'
+    };
+
+    let batchRecords = [defaultRecord];
+
+    function updateBatchPayload() {
+      batchPayload.value = JSON.stringify(batchRecords, null, 2);
+      batchStatus.textContent = `Batch size: ${batchRecords.length} record${batchRecords.length === 1 ? '' : 's'}`;
+    }
+
+    function getFormRecord() {
+      const record = {};
+      const keys = Object.keys(defaultRecord);
+      keys.forEach(key => {
+        const el = document.getElementById(key);
+        if (!el) return;
+        const value = el.value;
+        if (['Age', 'Income', 'LoanAmount', 'CreditScore', 'MonthsEmployed', 'NumCreditLines', 'LoanTerm'].includes(key)) {
+          record[key] = parseInt(value, 10);
+        } else if (['InterestRate', 'DTIRatio'].includes(key)) {
+          record[key] = parseFloat(value);
+        } else {
+          record[key] = value;
+        }
+      });
+      return record;
+    }
+
+    document.getElementById('addRecordButton').addEventListener('click', () => {
+      const record = getFormRecord();
+      batchRecords.push(record);
+      updateBatchPayload();
+      responseOutput.textContent = `Added new record to batch. Total records: ${batchRecords.length}`;
+    });
+
+    document.getElementById('clearBatchButton').addEventListener('click', () => {
+      batchRecords = [];
+      updateBatchPayload();
+      responseOutput.textContent = 'Batch cleared. Add records before predicting.';
+    });
+
+    document.getElementById('runBatchButton').addEventListener('click', async () => {
+      responseOutput.textContent = 'Running batch prediction...';
+      try {
+        batchRecords = JSON.parse(batchPayload.value);
+        const response = await fetch('/predict/batch', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({inputs: batchRecords})
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+          responseOutput.textContent = `Error ${response.status}: ${JSON.stringify(result, null, 2)}`;
+          return;
+        }
+
+        responseOutput.textContent = JSON.stringify(result, null, 2);
+      } catch (error) {
+        responseOutput.textContent = `Invalid JSON or server error: ${error}`;
+      }
+    });
+
+    updateBatchPayload();
+  </script>
+</body>
+</html>

@@ -6,7 +6,8 @@ from src.loan_default_prediction.entity.config_entity import (DataIngestionConfi
                                                               DataTransformationConfig,
                                                               ModelTrainingConfig,
                                                               ModelEvaluationConfig,
-                                                              ModelPromotionConfig)
+                                                              ModelPromotionConfig,
+                                                              ModelInferenceConfig)
 
 class ConfigurationManager:
     def __init__(self, config_filepath = CONFIG_FILE_PATH, params_filepath = PARAMS_FILE_PATH):
@@ -144,3 +145,22 @@ class ConfigurationManager:
         )
 
         return model_promotion_config
+
+    def get_model_inference_config(self) -> ModelInferenceConfig:
+        config = self.config.model_inference
+
+        create_directories([config.root_dir])
+
+        model_inference_config = ModelInferenceConfig(
+            root_dir=config.root_dir,
+            model_path=config.model_path,
+            input_data_path=config.input_data_path,
+            prediction_output_path=config.prediction_output_path,
+            target_column=config.target_column,
+            scaler_path=config.scaler_path,
+            numeric_columns=config.numeric_columns,
+            categorical_columns=config.categorical_columns,
+            drop_columns=config.drop_columns
+        )
+
+        return model_inference_config

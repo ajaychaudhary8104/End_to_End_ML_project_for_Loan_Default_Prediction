@@ -103,4 +103,32 @@ model_promotion:
   promote_threshold: 0.82
   archive_existing_versions: true
   copy_local_model: true
+
+model_inference:
+  root_dir: artifacts/inference
+  model_path: artifacts/model_training/xgboost_model.pkl
+  input_data_path: artifacts/data_transformation/split_data/test.csv
+  prediction_output_path: artifacts/inference/predictions.csv
+  target_column: Default
+  scaler_path: artifacts/data_preprocessing/scaler.pkl
+  numeric_columns:
+    - Age
+    - Income
+    - LoanAmount
+    - CreditScore
+    - MonthsEmployed
+    - NumCreditLines
+    - InterestRate
+    - LoanTerm
+    - DTIRatio
+  categorical_columns:
+    - Education
+    - EmploymentType
+    - MaritalStatus
+    - HasMortgage
+    - HasDependents
+    - LoanPurpose
+    - HasCoSigner
+  drop_columns:
+    - LoanID
   

@@ -77,3 +77,14 @@ stages:
     outs:
       - artifacts/model_promotion/promotion_summary.json
       - artifacts/model_promotion/production_model.pkl
+
+  model_inference:
+    cmd: python -m src.loan_default_prediction.pipeline.stage_08_inference
+    deps:
+      - src/loan_default_prediction/pipeline/stage_08_inference.py
+      - src/loan_default_prediction/components/inference.py
+      - artifacts/model_training/xgboost_model.pkl
+      - artifacts/data_transformation/split_data/test.csv
+      - config/config.yaml
+    outs:
+      - artifacts/inference/predictions.csv
