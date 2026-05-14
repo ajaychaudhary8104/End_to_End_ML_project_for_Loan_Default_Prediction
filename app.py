@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from contextlib import asynccontextmanager
+import uvicorn
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
@@ -10,8 +11,8 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from loan_default_prediction import logger
-from src.loan_default_prediction.config.configuration import ConfigurationManager
-from src.loan_default_prediction.components.inference import ModelInference
+from loan_default_prediction.config.configuration import ConfigurationManager
+from loan_default_prediction.components.inference import ModelInference
 
 ROOT_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = ROOT_DIR / "templates"
@@ -187,3 +188,7 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
         status_code=500,
         content={"detail": "Internal server error"},
     )
+
+if __name__ == "__main__":
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
