@@ -114,6 +114,17 @@ async def health_check() -> HealthResponse:
         version=app.version,
     )
 
+@app.get("/health/live")
+async def liveness():
+    return {"status": "alive"}
+
+
+@app.get("/health/ready")
+async def readiness():
+    if not getattr(app.state, "model_loaded", False):
+        raise HTTPException(status_code=503, detail="Model not loaded")
+
+    return {"status": "ready"}
 
 @app.post("/predict", response_model=SinglePredictionResponse)
 async def predict_single(request: SinglePredictionRequest) -> SinglePredictionResponse:

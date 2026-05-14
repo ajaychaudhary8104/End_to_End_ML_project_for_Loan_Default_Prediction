@@ -1,0 +1,90 @@
+# Git
+.git
+.gitignore
+
+# GitHub
+.github
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+.env.*
+
+# Pytest
+.pytest_cache/
+
+# Mypy
+.mypy_cache/
+
+# Ruff
+.ruff_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+
+# Build files
+build/
+dist/
+*.egg-info/
+
+# DVC
+.dvc/
+*.dvc
+
+# MLflow
+mlruns/
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# AWS credentials
+.aws/
+
+# Model artifacts (optional)
+models/
+
+# Data files (optional)
+data/
+research/
+model_evaluation_docs/

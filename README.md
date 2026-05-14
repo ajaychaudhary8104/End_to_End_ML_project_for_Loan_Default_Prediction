@@ -26,75 +26,292 @@ set MLFLOW_TRACKING_PASSWORD=
 docker build -t loan-prediction:latest .
 docker run -p 8000:8000 loan-prediction:latest
 
-# AWS-CICD-Deployment-with-Github-Actions
 
-## 1. Login to AWS console.
+# AWS CI/CD Deployment with GitHub Actions
 
-## 2. Create IAM user for deployment
+## Step 1: Login to AWS Console
 
-	#with specific access
+Go to:
 
-	1. EC2 access : It is virtual machine
+[AWS Console](https://aws.amazon.com/console/?utm_source=chatgpt.com)
 
-	2. ECR: Elastic Container registry to save your docker image in aws
+---
 
+# Step 2: Create IAM User for Deployment
 
-	#Description: About the deployment
+Go to:
 
-	1. Build docker image of the source code
+* IAM → Users → Create User
 
-	2. Push your docker image to ECR
+## Required Permissions
 
-	3. Launch Your EC2 
+Attach these policies:
 
-	4. Pull Your image from ECR in EC2
+* `AmazonEC2FullAccess`
+* `AmazonEC2ContainerRegistryFullAccess`
 
-	5. Lauch your docker image in EC2
+## Purpose of These Permissions
 
-	#Policy:
+### EC2 Access
 
-	1. AmazonEC2ContainerRegistryFullAccess
+Used to manage virtual machines.
 
-	2. AmazonEC2FullAccess
+### ECR Access
 
-	
-## 3. Create ECR repo to store/save docker image
-    - Save the URI: 566373416292.dkr.ecr.ap-south-1.amazonaws.com/mlproj
+Used to store Docker images in AWS Elastic Container Registry.
 
-	
-## 4. Create EC2 machine (Ubuntu) 
+---
 
-## 5. Open EC2 and Install docker in EC2 Machine:
-	
-	
-	#optinal
+# CI/CD Deployment Flow
 
-	sudo apt-get update -y
+1. Build Docker image from source code
+2. Push Docker image to Amazon ECR
+3. Launch EC2 instance
+4. Pull Docker image from ECR inside EC2
+5. Run Docker container on EC2
 
-	sudo apt-get upgrade
-	
-	#required
+---
 
-	curl -fsSL https://get.docker.com -o get-docker.sh
+# Step 3: Create ECR Repository
 
-	sudo sh get-docker.sh
+Go to:
 
-	sudo usermod -aG docker ubuntu
+* Elastic Container Registry (ECR)
+* Create Repository
 
-	newgrp docker
-	
-# 6. Configure EC2 as self-hosted runner:
-    setting>actions>runner>new self hosted runner> choose os> then run command one by one
+Example Repository URI:
 
+```bash
+577124149610.dkr.ecr.us-east-1.amazonaws.com/loan_default_repo
+```
 
-# 7. Setup github secrets:
+Save this URI for GitHub Secrets.
 
-    AWS_ACCESS_KEY_ID=
+---
 
-    AWS_SECRET_ACCESS_KEY=
+# Step 4: Launch EC2 Instance
 
-    AWS_REGION = us-east-1
+Recommended Configuration:
 
-    AWS_ECR_LOGIN_URI = demo>>  566373416292.dkr.ecr.ap-south-1.amazonaws.com
+* Ubuntu Server 22.04
+* t2.medium or higher
+* Minimum 20GB storage
 
-    ECR_REPOSITORY_NAME = simple-app
+Allow These Inbound Rules:
+
+| Type       | Port |
+| ---------- | ---- |
+| SSH        | 22   |
+| HTTP       | 80   |
+| HTTPS      | 443  |
+| Custom TCP | 8080 |
+
+---
+
+# Step 5: Install Docker on EC2
+
+Connect to EC2:
+
+```bash
+ssh -i key.pem ubuntu@<EC2_PUBLIC_IP>
+```
+
+Run:
+
+```bash
+sudo apt-get update -y
+
+sudo apt-get upgrade -y
+```
+
+Install Docker:
+
+```bash
+curl -fsSL https://get.docker.com -o get-docker.sh
+
+sudo sh get-docker.sh
+```
+
+Add Ubuntu user to Docker group:
+
+```bash
+sudo usermod -aG docker ubuntu
+```
+
+Activate group changes:
+
+```bash
+newgrp docker
+```
+
+Verify Docker:
+
+```bash
+docker --version
+```
+
+---
+
+# Step 6: Configure EC2 as GitHub Self-Hosted Runner
+
+Go to your GitHub repository:
+
+```text
+Settings → Actions → Runners → New Self-hosted Runner
+```
+
+Choose:
+
+* Linux
+* x64
+
+Run all commands provided by GitHub one-by-one on EC2.
+
+Example:
+
+```bash
+mkdir actions-runner && cd actions-runner
+
+curl -o actions-runner-linux-x64.tar.gz -L https://github.com/actions/runner/releases/download/v2.317.0/actions-runner-linux-x64-2.317.0.tar.gz
+
+tar xzf ./actions-runner-linux-x64.tar.gz
+```
+
+Configure runner:
+
+```bash
+./config.sh --url https://github.com/<username>/<repo> --token <TOKEN>
+```
+
+Start runner:
+
+```bash
+./run.sh
+```
+
+For background service:
+
+```bash
+sudo ./svc.sh install
+
+sudo ./svc.sh start
+```
+
+---
+
+# Step 7: Configure GitHub Secrets
+
+Go to:
+
+```text
+Repository → Settings → Secrets and variables → Actions
+```
+
+Add:
+
+```bash
+AWS_ACCESS_KEY_ID=
+
+AWS_SECRET_ACCESS_KEY=
+
+AWS_REGION=ap-south-1
+
+AWS_ECR_LOGIN_URI=566373416292.dkr.ecr.ap-south-1.amazonaws.com
+
+ECR_REPOSITORY_NAME=mlproj
+```
+
+---
+
+# Recommended Project Structure
+
+```text
+project/
+│
+├── .github/
+│   └── workflows/
+│       └── main.yaml
+│
+├── Dockerfile
+├── requirements.txt
+├── app.py
+├── src/
+├── templates/
+├── static/
+└── README.md
+```
+
+---
+
+# Verify Deployment
+
+After GitHub Actions succeeds:
+
+Check running containers:
+
+```bash
+docker ps
+```
+
+Open:
+
+```text
+http://<EC2_PUBLIC_IP>:8080
+```
+
+---
+
+# Useful Docker Commands
+
+Stop container:
+
+```bash
+docker stop cnncls
+```
+
+Remove container:
+
+```bash
+docker rm cnncls
+```
+
+Remove images:
+
+```bash
+docker image prune -a
+```
+
+View logs:
+
+```bash
+docker logs -f cnncls
+```
+
+---
+
+# Security Recommendations
+
+Avoid using root user.
+
+Use least-privilege IAM policies instead of full access in production.
+
+Prefer IAM Roles for EC2 instead of storing AWS keys in GitHub Secrets.
+
+Enable HTTPS using:
+
+* [Nginx](https://nginx.org/?utm_source=chatgpt.com)
+* [Certbot](https://certbot.eff.org/?utm_source=chatgpt.com)
+
+Use AWS Security Groups carefully.
+
+---
+
+# Optional Improvements
+
+You can further enhance deployment using:
+
+* [Docker Compose](https://docs.docker.com/compose/?utm_source=chatgpt.com)
+* [Kubernetes](https://kubernetes.io/?utm_source=chatgpt.com)
+* [AWS ECS](https://aws.amazon.com/ecs/?utm_source=chatgpt.com)
+* [AWS CodePipeline](https://aws.amazon.com/codepipeline/?utm_source=chatgpt.com)
+* [Terraform](https://www.terraform.io/?utm_source=chatgpt.com)
